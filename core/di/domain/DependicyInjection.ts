@@ -34,7 +34,10 @@ export class DependencyInjection implements IDependencyInjection {
     return token as T;
   }
 
+
   private _containers = new Map<AnyToken, ProvideConfig>();
+  public get container() { return this._containers; }
+
   private _singletons = new Map<AnyToken, unknown>();
 
   private provide<T>(token: AnyToken<T>, config: ProvideConfig<T>): void {
