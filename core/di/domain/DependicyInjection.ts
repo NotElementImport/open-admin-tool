@@ -11,7 +11,20 @@ const tokenTag = Symbol();
 
 export class DependencyInjection implements IDependencyInjection {
   public static isValidToken<T extends AnyToken>(item: T): item is T {
+    if (typeof item !== "function" && typeof item !== "symbol") {
+      return false;
+    }
 
+    // @ts-ignore
+    if (typeof item === "symbol" && item.tag && item.tag === tokenTag) {
+      return true;
+    }
+
+    if (typeof item === "function" && item.name !== "") {
+      return true;
+    }
+
+    return false;
   }
 
   public static createToken<T>(): Token<T> {
@@ -25,6 +38,10 @@ export class DependencyInjection implements IDependencyInjection {
   private _singletons = new Map<AnyToken, unknown>();
 
   private provide<T>(token: AnyToken<T>, config: ProvideConfig<T>): void {
+    if (!DependencyInjection.isValidToken(token)) {
+      throw new Error("Not valid token for Provide");
+    }
+
     this._containers.set(token, config);
   }
 
