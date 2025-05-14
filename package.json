@@ -3,8 +3,12 @@
   "version": "1.0.0",
   "description": "A open source admin UI Framework",
   "main": "index.js",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build:compile": "npx tsc -p ./tsconfig.json",
+    "build:test": "node --test ./build/tests.js",
+    "test": "npm start",
+    "start": "npm run build:compile; npm run build:test"
   },
   "repository": {
     "type": "git",
@@ -22,6 +26,7 @@
   },
   "homepage": "https://github.com/NotElementImport/open-admin-tool#readme",
   "devDependencies": {
+    "@types/node": "^22.15.17",
     "typescript": "^5.8.3"
   }
 }
