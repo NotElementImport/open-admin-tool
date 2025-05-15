@@ -1,5 +1,5 @@
 import { test } from "node:test";
-import { fail } from "node:assert";
+import { strictEqual } from "node:assert";
 import { DependencyInjection } from "../../domain/DependicyInjection.js";
 import { CreateTokenService } from "../../../object/service/CreateTokenService.js";
 
@@ -9,18 +9,14 @@ test("DI: Factory -> Class", () => {
   const di = new DependencyInjection();
   di.factory(FactoryDI, FactoryDI);
 
-  if (!(di.inject(FactoryDI) instanceof FactoryDI)) {
-    fail("Instance not same class");
-  }
+  strictEqual(di.inject(FactoryDI) instanceof FactoryDI, true);
 });
 
 test("DI: Factory -> Builder", () => {
   const di = new DependencyInjection();
   di.factory(FactoryDI, () => new FactoryDI());
 
-  if (!(di.inject(FactoryDI) instanceof FactoryDI)) {
-    fail("Instance not same class");
-  }
+  strictEqual(di.inject(FactoryDI) instanceof FactoryDI, true);
 });
 
 test("DI: Factory -> Interface", () => {
@@ -29,7 +25,5 @@ test("DI: Factory -> Interface", () => {
   const di = new DependencyInjection();
   di.factory(token, FactoryDI);
 
-  if (!(di.inject(token) instanceof FactoryDI)) {
-    fail("Instance not same class");
-  }
+  strictEqual(di.inject(token) instanceof FactoryDI, true);
 });
