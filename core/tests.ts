@@ -1,6 +1,18 @@
+import { suite } from "node:test";
+
 // Object
-import "./object/test/tests.js";
+suite("Module (Object)", async () => {
+  await import("./object/test/tests.js");
+});
 // Dependicy Injection
-import "./di/test/tests.js";
+suite("Module (Dependicy Injection)", async () => {
+  await import("./di/test/tests.js");
+});
+// Routing
+suite("Module (Routing)", async () => {
+  await import("./routing/test/tests.js");
+});
 // App
-import "./app/test/tests.js";
+suite("Module (App)", async () => {
+  await import("./app/test/tests.js");
+});
