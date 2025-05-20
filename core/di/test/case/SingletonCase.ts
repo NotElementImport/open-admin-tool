@@ -1,35 +1,31 @@
-import { test } from "node:test";
-import { fail } from "node:assert";
+import { describe, test } from "node:test";
+import { strictEqual } from "node:assert";
 import { DependencyInjection } from "../../domain/DependicyInjection.js";
 import { CreateTokenService } from "../../../object/service/CreateTokenService.js";
 
 class SingletonDI { }
 
-test("DI: Singleton -> Class", () => {
-  const di = new DependencyInjection();
-  di.singleton(SingletonDI, SingletonDI);
+describe("DI Must can create Singleton, singleton instances must be same", () => {
+  test("DI: Singleton -> Class", () => {
+    const di = new DependencyInjection();
+    di.singleton(SingletonDI, SingletonDI);
 
-  if (di.inject(SingletonDI) !== di.inject(SingletonDI)) {
-    fail("Instances not same");
-  }
-});
+    strictEqual(di.inject(SingletonDI) === di.inject(SingletonDI), true);
+  });
 
-test("DI: Singleton -> Builder", () => {
-  const di = new DependencyInjection();
-  di.singleton(SingletonDI, () => new SingletonDI());
+  test("DI: Singleton -> Builder", () => {
+    const di = new DependencyInjection();
+    di.singleton(SingletonDI, () => new SingletonDI());
 
-  if (di.inject(SingletonDI) !== di.inject(SingletonDI)) {
-    fail("Instances not same");
-  }
-});
+    strictEqual(di.inject(SingletonDI) === di.inject(SingletonDI), true);
+  });
 
-test("DI: Singleton -> Interface", () => {
-  const token = CreateTokenService.createToken();
+  test("DI: Singleton -> Interface", () => {
+    const token = CreateTokenService.createToken();
 
-  const di = new DependencyInjection();
-  di.singleton(token, SingletonDI);
+    const di = new DependencyInjection();
+    di.singleton(token, SingletonDI);
 
-  if (di.inject(token) !== di.inject(token)) {
-    fail("Instances not same");
-  }
+    strictEqual(di.inject(token) === di.inject(token), true);
+  });
 });

@@ -1,10 +1,10 @@
-import { DependencyInjection } from "../domain/DependicyInjection.js";
+import { Container } from "../dto/Container.js";
 import type { AnyToken, ProvideConfig } from "../interfaces.js";
 import { ValidateDIService } from "./ValidateDIService.js";
 
 export class ProvideDIService {
   public constructor(
-    private _di: DependencyInjection,
+    private _container: Container,
   ) { }
 
   public provideOrFail(token: AnyToken, config: ProvideConfig) {
@@ -12,6 +12,6 @@ export class ProvideDIService {
       throw new Error("Not valid token for Provide");
     }
 
-    this._di.container.set(token, config);
+    this._container.table.set(token, config);
   }
 }
