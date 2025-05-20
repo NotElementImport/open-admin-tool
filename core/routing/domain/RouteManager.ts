@@ -1,75 +1,41 @@
-import { Route } from "./Route.js";
+import { RouteList } from "../dto/RouteList.js";
+import { FindRouteService } from "../service/FindRouteService.js";
+import { RegisterRouteService } from "../service/RegisterRouteService.js";
+import { RoutesToObjectService } from "../service/RoutesToObjectService.js";
+import type { Route } from "./Route.js";
 
 export class RouteManager {
-  private routes = new Set<Route>();
+  private routeList: RouteList;
+  private registerRouteService: RegisterRouteService;
+  private toObjectService: RoutesToObjectService;
+  private findRouteService: FindRouteService;
 
-  public get count() {
-    return this.routes.size;
+  public constructor(baseName: string = "") {
+    this.routeList = new RouteList();
+    this.routeList.baseName = baseName;
+
+    this.registerRouteService = new RegisterRouteService(this.routeList);
+    this.toObjectService = new RoutesToObjectService(this.routeList);
+    this.findRouteService = new FindRouteService(this.toObjectService);
   }
 
-  public add(route: Route) {
-    this.routes.add(route);
-    return this;
-  }
+  public add(route: Route | typeof this): typeof this {
+    if (route === this) {
+      return this;
+    }
 
-  public remove(route: Route | string) {
-    var routeInstance: Route = this.findByPath(route) ?? route as Route;
-    this.routes.delete(routeInstance);
+    this.registerRouteService.registerOrFail(
+      route
+    );
+
     return this;
   }
 
   public has(route: Route | string): boolean {
-    var routeInstance: Route = this.findByPath(route) ?? route as Route;
-    return this.routes.has(routeInstance);
+    return this.findRouteService.findRoute(route);
   }
 
-  public *entries() {
-    let i = 0;
-    for (const [_, value] of this.routes.entries()) {
-      yield [i, value] as [number, Route];
-      i += 1;
-    }
-  }
-
-  public forEach(callback: (v: Route, i: number) => void) {
-    for (const [index, value] of this.entries()) {
-      callback(value, index);
-    }
-
-    return this;
-  }
-
-  public find(callback: (v: Route, i: number) => boolean): Route | null {
-    for (const [index, value] of this.entries()) {
-      if (callback(value, index)) {
-        return value;
-      }
-    }
-
-    return null;
-  }
-
-  public findByPath(path: string | Route): Route | null {
-    if (typeof path !== "string") {
-      return null;
-    }
-
-    return this.find((route) => route.path === path);
-  }
-
-  public some(callback: (v: Route, i: number) => boolean) {
-    return !!this.find(callback);
-  }
-
-  public map(callback: (v: Route, i: number) => Route): typeof this {
-    const instance = new (this.constructor as any)();
-
-    this.forEach((value, index) => {
-      instance.add(
-        callback(value, index)
-      );
-    });
-
-    return instance;
+  public toObject(): Record<string, Route> {
+    return this.toObjectService.toObject();
   }
 }
