@@ -1,2 +1,2 @@
 import "./case/HealthcheckCase.js";
-import "./case/DICase.js";
+import "./case/ModuleCase.js";

@@ -1,24 +1,32 @@
-import type { App } from "../../app/domain/App.js";
 import { EventList } from "../dto/EventList.js";
-import { EventSubscribeService } from "../service/EventSubscribeService.js";
+import { EventService } from "../service/EventService.js";
+import type { IEventName, ISubscribe, IUnSubscribeHandle, IUnSubscribeResult } from "../interfaces/SubscribeInterfaces.js";
 
-export class EventManager {
-  private eventList: EventList;
-  private eventSubscribe: EventSubscribeService;
+export class EventManager implements ISubscribe {
+  protected eventList: EventList;
+  protected eventService: EventService;
 
-  public constructor(app: App) {
-    this.eventList = new EventList();
-    this.eventSubscribe = new EventSubscribeService(
-      this.eventList
+  public constructor() {
+    this.eventService = new EventService(
+      this.eventList = new EventList()
     );
   }
 
-  public on(event: string, callback: (...args: any) => void) {
-    this.eventSubscribe.subscribe(event, callback);
+  public dispatch(event: IEventName): void {
+    this.eventService.dispatch(event);
+  }
+
+  public getCount(event: IEventName): number {
+    return this.eventService.getCount(event);
+  }
+
+  public on(event: IEventName, callback: Function): IUnSubscribeHandle {
+    this.eventService.subscribe(event, callback);
+
     return () => this.off(event, callback);
   }
 
-  public off(event: string, callback: (...args: any) => void) {
-    return this.eventSubscribe.unsubscribe(event, callback);
+  public off(event: IEventName, callback: Function): IUnSubscribeResult {
+    return this.eventService.unsubscribe(event, callback);
   }
 };
